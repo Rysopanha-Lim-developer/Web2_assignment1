@@ -12,27 +12,26 @@ const staticBlog = [
     }
 ]
 
-const editTitle = (blogID) => {
-    const blog = document.getElementById(`blog-${blogID}`)
-    const title =  document.querySelector(`#blog-${blogID} h1`)
+const editTitle = (target) => {
+    const title =  target.firstChild
 
     const newTitle = prompt("Enter new blog title: ")
     title.textContent = newTitle
 }
 
 
-const editContent = (blogID) => {
-    const blog = document.getElementById(`blog-${blogID}`)
-    const content =  document.querySelector(`#blog-${blogID} p`)
+const editContent = (target) => {
+    const blog = target.firstChild.textContent
+    const content =  target.childNodes[1]
 
     const newContent = prompt("Enter new blog content: ")
     content.textContent = newContent
 }
 
 
-const deletePost = (blogID) => {
-    const blog = document.querySelector(`#blog-${blogID}`)
-    const title = document.querySelector(`#blog-${blogID} h1`).textContent
+const deletePost = (target) => {
+    const blog = target
+    const title = target.firstChild.textContent
     const toDelete = confirm(`Are you sure you want to delete blog with title "${title}"?`)
 
     if (toDelete) {
@@ -42,9 +41,8 @@ const deletePost = (blogID) => {
 }
 
 
-const createBlog = (title, content, blogID) =>{
+const createBlog = (title, content) =>{
     const article = document.createElement("article");
-    article.setAttribute("id", `blog-${blogID}`)
 
     const blogTitle = document.createElement("h1");
     blogTitle.textContent = title;
@@ -54,17 +52,23 @@ const createBlog = (title, content, blogID) =>{
 
     const editTitleBtn = document.createElement("button");
     editTitleBtn.setAttribute("id", "editTitleBtn");
-    editTitleBtn.addEventListener("click", () => editTitle(blogID));
+    editTitleBtn.addEventListener("click", (e) => {
+        editTitle(e.target.parentElement)
+    });
     editTitleBtn.textContent = "Edit Title";
 
     const editContentBtn = document.createElement("button");
     editContentBtn.setAttribute("id", "editContentBtn");
-    editContentBtn.addEventListener("click", () => editContent(blogID));
+    editContentBtn.addEventListener("click", (e) => {
+        editContent(e.target.parentElement)
+    });
     editContentBtn.textContent = "Edit Content"
 
     const deletePostBtn = document.createElement("button");
     deletePostBtn.setAttribute("id", "deletePostBtn");
-    deletePostBtn.addEventListener("click", () => deletePost(blogID));
+    deletePostBtn.addEventListener("click", (e) => {
+        deletePost(e.target.parentElement)
+    });
     deletePostBtn.textContent = "Delete Post"
 
     article.append(blogTitle)
@@ -75,16 +79,17 @@ const createBlog = (title, content, blogID) =>{
     mainContainer.appendChild(article)
 }
 
-let blogID = 1
-staticBlog.map((eachBlog) => {
-    createBlog(eachBlog.title, eachBlog.content, blogID)
-    blogID ++
-})
+
 const addBlog = () => {
     const title = prompt("What is your blog title?")
     const content = prompt("What is the content of your blog?")
-    createBlog(title, content, blogID)
-    blogID ++
+    createBlog(title, content)
 }
 
-addBlogBtn.addEventListener("click", addBlog)
+window.onload = () => {
+    staticBlog.map((eachBlog) => {
+        createBlog(eachBlog.title, eachBlog.content)
+    })
+
+    addBlogBtn.addEventListener("click", addBlog)
+}
